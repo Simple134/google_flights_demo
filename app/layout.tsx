@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-google-sans">
+      <body className="font-google-sans" suppressHydrationWarning>
         <ThemeProvider>
           <SidebarProvider>
             {children}

@@ -41,18 +41,145 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-button {
-  background-color: var(--primary);
-  color: var(--background);
-  transition: background-color 0.3s ease;
+
+
+
+/* DateRange Dark Theme */
+.dark-theme {
+  background-color: #303134 !important;
+  color: #fff !important;
+  
 }
 
-button:hover {
-  background-color: var(--primary-hover);
+.dark-theme .rdrMonthName,
+.dark-theme .rdrDayNumber,
+.dark-theme .rdrDayPassive,
+.dark-theme .rdrWeekDay {
+  color: #fff !important;
 }
 
-input, select {
-  background-color: var(--secondary);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
+.dark-theme .rdrMonthAndYearPickers select {
+  color: #fff !important;
+  background-color: #303134 !important;
 }
+
+.dark-theme .rdrMonthAndYearPickers select option {
+  background-color: #303134 !important;
+}
+
+.dark-theme .rdrDateDisplayWrapper {
+  background-color: #202124 !important;
+}
+
+.dark-theme .rdrDateDisplay input {
+  color: #fff !important;
+  background-color: #303134 !important;
+}
+
+.dark-theme .rdrNextPrevButton {
+  background-color: #303134 !important;
+}
+
+.dark-theme .rdrNextPrevButton i {
+  border-color: #fff !important;
+}
+
+.dark-theme .rdrDayToday .rdrDayNumber span:after {
+  background: #3d91ff !important;
+}
+
+.dark-theme .rdrDay:not(.rdrDayPassive) .rdrInRange,
+.dark-theme .rdrDay:not(.rdrDayPassive) .rdrStartEdge,
+.dark-theme .rdrDay:not(.rdrDayPassive) .rdrEndEdge,
+.dark-theme .rdrDay:not(.rdrDayPassive) .rdrSelected {
+  color: #fff !important;
+}
+
+.dark-theme .rdrDayStartPreview,
+.dark-theme .rdrDayEndPreview,
+.dark-theme .rdrDayInPreview {
+  border-color: #3d91ff !important;
+  color: #fff !important;
+}
+.dark-theme .rdrCalendarWrapper {
+  background-color: #303134 !important;
+  color: #fff !important;
+}
+
+/* Geosuggest styles */
+.geosuggest {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.geosuggest__suggests {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 25em;
+  padding: 0;
+  margin-top: 0.5em;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  overflow-x: hidden;
+  overflow-y: auto;
+  list-style: none;
+  z-index: 50;
+}
+
+.geosuggest__suggests--hidden {
+  max-height: 0;
+  overflow: hidden;
+  border-width: 0;
+}
+
+.geosuggest__item {
+  padding: 0.75em;
+  cursor: pointer;
+}
+
+.geosuggest__item:hover,
+.geosuggest__item:focus {
+  background: #f5f5f5;
+}
+
+.geosuggest__item--active {
+  background: #267dc0;
+  color: #fff;
+}
+
+.geosuggest__item--active:hover,
+.geosuggest__item--active:focus {
+  background: #1a5f96;
+}
+
+/* Dark theme styles */
+.dark .geosuggest__suggests {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark .geosuggest__item {
+  color: #e5e7eb;
+}
+
+.dark .geosuggest__item:hover,
+.dark .geosuggest__item:focus {
+  background: #374151;
+}
+
+.dark .geosuggest__item--active {
+  background: #2563eb;
+}
+
+.dark .geosuggest__item--active:hover,
+.dark .geosuggest__item--active:focus {
+  background: #1d4ed8;
+}
+
+
+

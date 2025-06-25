@@ -1,64 +1,101 @@
-import { useState } from "react";
-
-import { ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useTheme } from "@/src/context/useTheme";
 
 interface PassengerCount {
   adults: number;
   children: number;
-  infants: number;
+  infantsInSeat: number;
+  infantsOnLap: number;
 }
 
 interface PassengerSelectorProps {
   passengers: PassengerCount;
   onChange: (passengers: PassengerCount) => void;
+  onClose: () => void;
 }
 
-const PassengerSelector = ({ passengers, onChange }: PassengerSelectorProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+const PassengerSelector = ({
+  passengers,
+  onChange,
+  onClose,
+}: PassengerSelectorProps) => {
+  const { theme } = useTheme();
+  const [tempPassengers, setTempPassengers] = useState<PassengerCount>(passengers);
 
-  const updatePassengerCount = (type: keyof PassengerCount, increment: boolean) => {
-    const newPassengers = { ...passengers };
+  // Reset temp passengers when the component opens
+  useEffect(() => {
+    setTempPassengers(passengers);
+  }, [passengers]);
+
+  const updatePassengerCount = (
+    type: keyof PassengerCount,
+    increment: boolean
+  ) => {
+    const newPassengers = { ...tempPassengers };
     if (increment) {
       newPassengers[type]++;
     } else if (newPassengers[type] > 0) {
       if (type === "adults" && newPassengers[type] === 1) return;
       newPassengers[type]--;
     }
-    onChange(newPassengers);
+    setTempPassengers(newPassengers);
   };
 
-  const totalPassengers = passengers.adults + passengers.children + passengers.infants;
+  const handleDone = () => {
+    onChange(tempPassengers);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setTempPassengers(passengers); // Reset to original state
+    onClose();
+  };
 
   return (
-    <div className="space-y-1">
-      <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">Passengers</p>
-      <div>
-          <button
-            className="h-14 w-full justify-between border-gray-300 hover:border-blue-500 text-base rounded-lg"
-          >
-            <span>{totalPassengers} passenger{totalPassengers !== 1 ? 's' : ''}</span>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
-          </button>
-        <div className="w-80 p-6 bg-white border border-gray-200 shadow-lg rounded-lg z-50">
+    <div
+      className={`flex justify-center items-center z-50 absolute top-0 left-0 w-full h-full`}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className={`w-full h-full `}>
+        <div
+          className={`w-80 p-6 ${theme === "dark" ? "bg-[#303134]" : "bg-white"}  shadow-lg rounded-lg z-50`}
+        >
           <div className="space-y-6">
             {/* Adults */}
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-gray-900">Adults</div>
-                <div className="text-sm text-gray-500">Ages 18+</div>
+                <div
+                  className={`font-medium ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Adults
+                </div>
               </div>
               <div className="flex items-center space-x-4">
                 <button
+                  type="button"
                   onClick={() => updatePassengerCount("adults", false)}
-                  disabled={passengers.adults <= 1}
-                  className="w-8 h-8 p-0 rounded-full"
+                  disabled={tempPassengers.adults <= 1}
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-gray-700"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
                 >
                   −
                 </button>
-                <span className="w-8 text-center font-medium">{passengers.adults}</span>
+                <span className="w-8 text-center font-medium">
+                  {tempPassengers.adults}
+                </span>
                 <button
+                  type="button"
                   onClick={() => updatePassengerCount("adults", true)}
-                  className="w-8 h-8 p-0 rounded-full"
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-blue-500"
+                      : "bg-blue-200 text-blue-700"
+                  }`}
                 >
                   +
                 </button>
@@ -68,55 +105,143 @@ const PassengerSelector = ({ passengers, onChange }: PassengerSelectorProps) => 
             {/* Children */}
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-gray-900">Children</div>
-                <div className="text-sm text-gray-500">Ages 2-17</div>
+                <div
+                  className={`font-medium ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Children
+                </div>
+                <div className="text-sm text-gray-500">Ages 2-11</div>
               </div>
               <div className="flex items-center space-x-4">
                 <button
+                  type="button"
                   onClick={() => updatePassengerCount("children", false)}
-                  disabled={passengers.children <= 0}
-                  className="w-8 h-8 p-0 rounded-full"
+                  disabled={tempPassengers.children <= 0}
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-gray-700"
+                      : "bg-gray-200"
+                  }`}
                 >
                   −
                 </button>
-                <span className="w-8 text-center font-medium">{passengers.children}</span>
+                <span className="w-8 text-center font-medium">
+                  {tempPassengers.children}
+                </span>
                 <button
+                  type="button"
                   onClick={() => updatePassengerCount("children", true)}
-                  className="w-8 h-8 p-0 rounded-full"
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-blue-500"
+                      : "bg-blue-200 text-blue-700"
+                  }`}
                 >
                   +
                 </button>
               </div>
             </div>
 
-            {/* Infants */}
+            {/* Infants in Seat */}
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-gray-900">Infants</div>
-                <div className="text-sm text-gray-500">Under 2</div>
+                <div
+                  className={`font-medium ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Infants
+                </div>
+                <div className="text-sm text-gray-500">In Seat</div>
               </div>
               <div className="flex items-center space-x-4">
                 <button
-                  onClick={() => updatePassengerCount("infants", false)}
-                  disabled={passengers.infants <= 0}
-                  className="w-8 h-8 p-0 rounded-full"
+                  type="button"
+                  onClick={() => updatePassengerCount("infantsInSeat", false)}
+                  disabled={tempPassengers.infantsInSeat <= 0}
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-gray-700"
+                      : "bg-gray-200"
+                  }`}
                 >
                   −
                 </button>
-                <span className="w-8 text-center font-medium">{passengers.infants}</span>
+                <span className="w-8 text-center font-medium">
+                  {tempPassengers.infantsInSeat}
+                </span>
                 <button
-                  onClick={() => updatePassengerCount("infants", true)}
-                  className="w-8 h-8 p-0 rounded-full"
+                  type="button"
+                  onClick={() => updatePassengerCount("infantsInSeat", true)}
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-blue-500"
+                      : "bg-blue-200 text-blue-700"
+                  }`}
                 >
                   +
                 </button>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-200">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+            {/* Infants on Lap */}
+            <div className="flex items-center justify-between">
+              <div>
+                <div
+                  className={`font-medium ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Infants
+                </div>
+                <div className="text-sm text-gray-500">On lap</div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  type="button"
+                  onClick={() => updatePassengerCount("infantsOnLap", false)}
+                  disabled={tempPassengers.infantsOnLap <= 0}
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-gray-700"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  −
+                </button>
+                <span className="w-8 text-center font-medium">
+                  {tempPassengers.infantsOnLap}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => updatePassengerCount("infantsOnLap", true)}
+                  className={`w-8 h-8 p-0 rounded-md cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-blue-500"
+                      : "bg-blue-200 text-blue-700"
+                  }`}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-4 flex justify-between w-full items-center">
+              <button 
+                onClick={handleCancel}
+                className={`w-full py-2 px-4 rounded-lg ${
+                  theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                }`}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDone}
+                className={`w-full py-2 px-4 rounded-lg ${
+                  theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                }`}
               >
                 Done
               </button>
